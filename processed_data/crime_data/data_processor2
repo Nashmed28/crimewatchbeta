@@ -1,0 +1,78 @@
+#!/usr/bin/env php
+<?php
+    
+    // reformats the formatted police log
+    // much easier to reformat twice than in one go
+    // removes unneeded aspects from the address
+    // use with format1_police_log.txt
+    
+    // requirements
+    require(__DIR__ . "/../includes/config.php");
+
+    // ensure proper usage
+    if ($argc !== 2)
+    {
+        print("Usage: import /path/to/txt\n");
+        exit(1);
+    }
+
+    // ensure file exists
+    if (!file_exists($argv[1]))
+    {
+        print("File does not exist: {$argv[1]}\n");
+        exit(1);
+    }
+
+    // ensure file is readable
+    if (!is_readable($argv[1]))
+    {
+        print("File is not readable: {$argv[1]}\n");
+        exit(1);
+    }
+
+    // open file
+    $handle = fopen($argv[1], "r");
+    
+    // open file to write to have processed data
+    $file = fopen("police_log.txt", "w");
+    
+    // checks to see if file exists
+    if ($handle === false || $file === false)
+    {
+        print("Could not open file: {$argv[1]}\n");
+        exit(1);
+    }
+    
+    // parse each line for needed info
+    while($rows = fgetcsv($handle, 0, "\t")) 
+    {
+        // decomposes address column
+        $full_address = explode(" ", $rows[3]);
+        $length = count($full_address);
+        $start = 0;
+        for ($i = 0; $i < $length; $i++)
+        {
+            if (is_numeric($full_address[$i]) && $start == 0)
+                $start = $i;
+        }
+        $address = "";
+        
+        // re-creating the newly formatted address
+        for ($i = $start; $i < $length - 1; $i++)
+            $address = $address . $full_address[$i] . " ";
+        $rows[3] = $address;
+        
+        // recreating the line with newly modify address
+        $n = count($rows);
+        for ($i = 0; $i < $n - 1; $i++)
+            fwrite($file, $rows[$i] . "\t");
+        fwrite($file, $rows[$n - 1] . "\n"); 
+    }
+    
+    // close file
+    fclose($file);
+    fclose($handle);
+    
+    // success
+    exit(0);
+?>

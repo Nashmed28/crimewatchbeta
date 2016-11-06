@@ -1,0 +1,73 @@
+#!/usr/bin/env php
+<?php
+    // processes Cambridge address data to usable format
+    // use with raw_cambridge_address.csv
+    
+    // requirements
+    require(__DIR__ . "/../includes/config.php");
+
+    // ensure proper usage
+    if ($argc !== 2)
+    {
+        print("Usage: import /path/to/txt\n");
+        exit(1);
+    }
+
+    // ensure file exists
+    if (!file_exists($argv[1]))
+    {
+        print("File does not exist: {$argv[1]}\n");
+        exit(1);
+    }
+
+    // ensure file is readable
+    if (!is_readable($argv[1]))
+    {
+        print("File is not readable: {$argv[1]}\n");
+        exit(1);
+    }
+
+    // open file
+    $handle = fopen($argv[1], "r");
+    
+    // open file to write to have processed data
+    $file = fopen("cambridge_address.txt", "w");
+    
+    // checks to see if file exists
+    if ($handle === false || $file === false)
+    {
+        print("Could not open file: {$argv[1]}\n");
+        exit(1);
+    }
+    
+    // parse each line for needed info
+    while($rows = fgetcsv($handle, 0, ",")) 
+    {
+        // modifying the original display of GPS to latitude and longitude of same length
+        $coordinate = explode(" ", $rows[4]);
+        $long = explode("(", $coordinate[1]);
+        $longitude = $long[1];
+        $lat = explode(")", $coordinate[2]);
+        $latitude = $lat[0];
+        $n = strlen($longitude);
+        $m = strlen($latitude);
+        for ($i = $n; $i < 24; $i++)
+        {
+            $longitude = $longitude . "0";
+        }
+        for ($i = $n; $i < 24; $i++)
+        {
+            $latitude = $latitude . "0";
+        }
+        
+        // writing to the process file
+        fwrite($file, $rows[0] . "," . $rows[1] . "," . $rows[2] . "," . $rows[3] . "," . $longitude . "," . $latitude . "\n"); 
+    }
+    
+    // close file
+    fclose($handle);
+
+    // success
+    exit(0);
+
+?>

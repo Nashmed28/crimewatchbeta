@@ -1,0 +1,85 @@
+#!/usr/bin/env php
+<?php
+    
+    // formatting the police log data to a more usable form
+    // use with raw_police_log.txt
+
+    // requirements
+    require(__DIR__ . "/../includes/config.php");
+
+    // ensure proper usage
+    if ($argc !== 2)
+    {
+        print("Usage: import /path/to/txt\n");
+        exit(1);
+    }
+
+    // ensure file exists
+    if (!file_exists($argv[1]))
+    {
+        print("File does not exist: {$argv[1]}\n");
+        exit(1);
+    }
+
+    // ensure file is readable
+    if (!is_readable($argv[1]))
+    {
+        print("File is not readable: {$argv[1]}\n");
+        exit(1);
+    }
+
+    // open file
+    $handle = fopen($argv[1], "r");
+    
+    // open file to write to have processed data
+    $file = fopen("format1_police_log.txt", "w");
+    
+    // checks to see if file exists
+    if ($handle === false || $file === false)
+    {
+        print("Could not open file: {$argv[1]}\n");
+        exit(1);
+    }
+    
+    // need line count to parse and format
+    $line = 0;
+    
+    // parse each line for needed info
+    while($rows = fgetcsv($handle, 0, " ")) 
+    {
+        $n = count($rows);
+        
+        // removes blank lines and filters unneeded lines 
+        if ($n > 1 && $rows[0] != "Harvard" && $rows[0] != "1033" && $rows[0] != "Cambridge," && $rows[0] != "Francis" && $rows[0] != "Chief" && $rows[0] != "Copyright" && $rows[0] != "PUBLIC" && $rows[0] != "Date")
+        {
+            // second wave of filters to avoid corner cases
+            $test = explode("/", $rows[0]);
+            if (is_numeric($test[0]) || $rows[0] == "Officer" || $rows[0] == "Officers" || $rows[0] == "Title")
+            {
+                for ($i = 0; $i < $n - 1; $i++)
+                {
+                    if ($rows[$i] != NULL && $rows[$i+1] != NULL)
+                        fwrite($file,$rows[$i] . " ");
+                    else if ($rows[$i] != NULL && $rows[$i+1] == NULL)
+                        fwrite($file,$rows[$i]);                    
+                    else if ($rows[$i] == NULL)
+                        fwrite($file,"\t");
+                }
+                if ($line % 2 == 0) 
+                    $line++;
+                else
+                {
+                    fwrite($file,"\n");
+                    $line++;
+                }
+            }
+        }    
+    }
+    
+    // close file
+    fclose($file);
+    fclose($handle);
+
+    // success
+    exit(0);
+?>
