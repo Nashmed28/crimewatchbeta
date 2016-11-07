@@ -24,6 +24,14 @@ crime_data.shift();
 
 
 
+
+
+
+
+
+
+
+
 //// Crime Unique Locations
 function unique_locations_set (data) {
   var unique_locations = new Set([]);
@@ -35,6 +43,12 @@ function unique_locations_set (data) {
   return Array.from(unique_locations);
   // console.log(unique_locations);
 }
+
+
+
+
+
+
 
 
 
@@ -57,6 +71,9 @@ for (i = 0; i < address_data.length; i++) {
 }
 
 // console.log(address_data)
+
+
+
 
 
 
@@ -91,6 +108,31 @@ function LatLng1 (location) {
 }
 
 
+
+
+
+
+
+
+  
+function filtering (column, filter) {
+  var data = [];
+  var index = crime_data_index[column];
+  for (i = 0; i < crime_data.length; i++) {
+    if (crime_data[i][index] == filter) {
+      data.push(crime_data[i]);
+    } 
+  }
+  return data;
+}
+
+
+
+
+
+
+
+
 //// Map Generation
 // Initial Map: https://developers.google.com/maps/documentation/javascript/importing_data
 // Marker Cluster: https://developers.google.com/maps/documentation/javascript/marker-clustering
@@ -102,7 +144,8 @@ function initMap() {
     mapTypeId: 'roadmap'
   });
 
-  setMarkers(map, crime_data);
+  var data = filtering("Incident Type", "UNWANTED GUEST");
+  setMarkers(map, data);
 }
 
 // function setMarkers (map) {
