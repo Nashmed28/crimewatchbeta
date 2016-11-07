@@ -1,4 +1,5 @@
-Date & Time Reported	Incident Type	Date & Time Occurred	Location	Disposition	Description
-11/3/16 9:25 AM	THEFT REPORT	11/3/16 - 6:30 AM	15 OXFORD ST	CLOSED	Officer dispatched to take a report of a stolen Quorum vacuum pump valued at $3,100.00
-11/3/16 12:25 PM	UNWANTED GUEST	11/3/16 - 11:30 AM	1563 MASSACHUSETTS AVE	CLOSED	Officer dispatched to remove suspicious person.
-11/3/16 9:25 PM	DEMONSTRATION	11/3/16 - 8:30 PM	1 OXFORD ST	CLOSED	Officer dispatched to subdue a demonstration.
+Date Reported	Time Reported	Incident Type	Date Occurred	Time Occurred	Location	Disposition	Description
+11/3/16	9:25 AM	THEFT REPORT	11/3/16	6:30 AM	15 OXFORD ST	CLOSED	Officer dispatched to take a report of a stolen Quorum vacuum pump valued at $3,100.00
+11/3/16	12:25 PM	UNWANTED GUEST	11/3/16	11:30 AM	1563 MASSACHUSETTS AVE	CLOSED	Officer dispatched to remove suspicious person.
+11/3/16	9:25 PM	DEMONSTRATION	11/3/16	8:30 PM	1 OXFORD ST	CLOSED	Officer dispatched to subdue a demonstration.
+11/4/16	4:35 PM	UNWANTED GUEST	11/4/16	8:30 AM	1 OXFORD ST	CLOSED	Officer dispatched to subdue an unwanted guest.
