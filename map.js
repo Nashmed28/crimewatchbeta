@@ -128,8 +128,30 @@ function setMarkers (map, data) {
   for (i = 0; i < unique_locations.length; i++) {
     var marker = new google.maps.Marker({
       position: LatLng1(unique_locations[i]),
-      map: map,
-      title: "HH" 
+      map: map 
     });
+    
+    var crimes = [];
+    var index = crime_data_index["Location"];
+    for (j = 0; j < data.length; j++) {
+      if (data[j][index].toUpperCase() == unique_locations[i].toUpperCase()) {
+        crimes.push(data[j]);
+      }
+    }
+
+    var content = "";
+
+    for (j = 0; j < crimes.length; j++) {
+      console.log(crimes[j][crime_data_index["Description"]])
+      content += "<div>" + crimes[j][crime_data_index["Description"]] + "</div>"
+    }
+
+    var infowindow = new google.maps.InfoWindow();
+    google.maps.event.addListener(marker, 'click', (function(marker,content,infowindow){
+      return function () {
+        infowindow.setContent(content);
+        infowindow.open(map, marker);
+      };
+    })(marker,content,infowindow));
   }
 }
