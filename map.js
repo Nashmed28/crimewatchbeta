@@ -1,7 +1,7 @@
 //// Crime Data Loaded
 // http://eloquentjavascript.net/1st_edition/chapter14.html
 var request = new XMLHttpRequest();
-request.open("GET", "sample_data/small_powerful.txt", false);
+request.open("GET", "sample_data/large_powerful.txt", false);
 request.send(null);
 
 var crime_data = request.responseText;
@@ -149,7 +149,8 @@ function query (filter) {
 
     // Contains filter (need to qualify contain function)
   }
-  console.log(filtered_data);
+  filtered_data = Array.from(filtered_data);
+  // console.log(filtered_data);
 }
 
 query(filter1);
