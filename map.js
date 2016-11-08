@@ -127,9 +127,37 @@ function filtering (column, filter) {
 }
 
 
+filter1 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST", "DEMONSTRATION"], "range": [], "contains": []}]}'
 
+function query (filter) {
+  filter = JSON.parse(filter);
+  filter = filter.filter;
+  var filtered_data = new Set([]);;
+  for (i = 0; i < filter.length; i++) {
+    index = crime_data_index[filter[i].column]
 
+    // Point filter
+    for (j = 0; j < filter[i].point.length; j++) {
+      for (k = 0; k < crime_data.length; k++) {
+        if (crime_data[k][index] == filter[i].point[j]) {
+          filtered_data.add(crime_data[k]);
+        }
+      }
+    }
 
+    // Range filter (need to quantify range)
+
+    // Contains filter (need to qualify contain function)
+  }
+  console.log(filtered_data);
+}
+
+query(filter1);
+
+// filter = '{"filter": [{"column": "", "point": "", "range": "", "contains": ""}]}'
+
+// &&& <= OR
+// ^^^ <= AND
 
 
 
@@ -185,7 +213,7 @@ function setMarkers (map, data) {
     var content = "";
 
     for (j = 0; j < crimes.length; j++) {
-      console.log(crimes[j][crime_data_index["Description"]])
+      // console.log(crimes[j][crime_data_index["Description"]])
       content += "<div>" + crimes[j][crime_data_index["Description"]] + "</div>"
     }
 
