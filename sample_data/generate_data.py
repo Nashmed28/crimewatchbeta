@@ -57,7 +57,7 @@ for i in range(500):
 	pa = PAM(randint(0,1))
 	dis = disp(randint(0,10))
 
-	line = [M, "\\", D, "\\2016\t", H, ":", M1, M2, pa, "\t", Type(randint(0,100)), "\t", M, "\\", D, "\\2016\t", H, ":", M1, M2, pa, "\t", address[randint(0, len(address)-1)], "\t", dis, "\tDescription", i, "\n"]
+	line = [M, "/", D, "/2016\t", H, ":", M1, M2, pa, "\t", Type(randint(0,100)), "\t", M, "/", D, "/2016\t", H, ":", M1, M2, pa, "\t", address[randint(0, len(address)-1)], "\t", dis, "\tDescription", i, "\n"]
 	
 	f.write(''.join([str(item) for item in line]))
 

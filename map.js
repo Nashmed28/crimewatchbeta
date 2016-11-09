@@ -1,3 +1,81 @@
+// More robust filtering (rnage/contains)
+// time and date comparsions
+// better UI (i.e. fields to modify what is shown)
+// more google maps api stuff
+
+// time -> 0-23: 59 000-059, 100-159 represents 12:00-12:59 AM
+// date -> format: mmddyyyy
+
+function date (day) {
+  day = day.split("/").map(Number);
+  day = new Date(day[2], day[0]-1, day[1])
+  // console.log(day)
+  return day;
+}
+
+function date_in_range (day, start, end) {
+  day = date(day);
+  start = date(start);
+  end = date(end);
+  // console.log((start <= day && day <= end))
+  return (start <= day && day <= end);
+}
+
+function date_contains (day, part, value) {
+  day = date(day);
+  if (part == "YEAR") {
+    return (day.getFullYear() == value);
+  }
+  else if (part == "MONTH") {
+    return (day.getMonth() == value);
+  }
+  else if (part == "DAY") {
+    return (day.getDate() == value);
+  }
+}
+
+// date("10/31/2016")
+// date_in_range("6/29/2016", "9/16/2016", "11/21/2016")
+
+function time_format (time) {
+  var num = parseInt(time.substring(0, time.length - 2).split(":").join(""))
+  if (time[time.length-2] == "P") {
+    if (num > 1200) {
+      num = num;
+    }
+    else {
+      num = num + 1200;
+    }
+  }
+  else if (time[time.length-2] == "A" && num >= 1200) {
+    num = num - 1200;
+  }
+  // console.log(num)
+  return num;
+}
+
+function time_in_range (time, start, end) {
+  time = time_format(time);
+  start = time_format(start);
+  end = time_format(end);
+  // console.log((start <= time && time <= end));
+  return (start <= time && time <= end);
+}
+
+function time_contains (time, part, value) {
+  // value -> 0-23 or 0-59
+  time = time_format(time);
+  if (part == "HOUR") {
+    return (value*100 < time && time < (value+1)*100)
+  }
+  if (part == "MINS") {
+    return (time%100 == value)
+  }
+}
+
+// time_in_range("1:01AM", "12:00PM", "2:10AM");
+
+
 //// Crime Data Loaded
 // http://eloquentjavascript.net/1st_edition/chapter14.html
 var request = new XMLHttpRequest();
@@ -126,41 +204,181 @@ function filtering (column, filter) {
   return data;
 }
 
+// filter = '{"filter": [{"column": "name", "point": [point1, point2], "range": [(start,end)], "contains": [(part, value)]}]}'
 
-filter1 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST", "DEMONSTRATION"], "range": [], "contains": []}]}'
+// &&& <= OR
+// ^^^ <= AND
+
+// var filter1 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST", "DEMONSTRATION"], "range": [], "contains": []}]}'
+
+// var filter2 = '{"filter": [{"column": "Date Occurred", "point": ["10/19/2016"], "range": [], "contains": []}]}'
+
+// var filter3 = '{"filter": [{"column": "Time Occurred", "point": ["10:45AM", "8:12PM"], "range": [], "contains": []}]}'
+
+// var filter4 = '{"filter": []}'
+
+// var filter5 = '{"filter": [{"column": "Incident Type", "point": ["THEFT"], "range": [], "contains": []}]}'
+
+// var filter6 = '{"filter": [{"column": "Incident Type", "point": ["THEFT"], "range": [], "contains": []}, {"column": "Time Occurred", "point": [], "range": [["9:28AM", "12:22PM"], ["8:00PM","10:00PM"]], "contains": []}]}'
+
+
+// function query (filter) {
+//   filter = JSON.parse(filter);
+//   filter = filter.filter;
+//   var filtered_data = new Set([]);
+//   if (filter.length == 0) {
+//     return crime_data;
+//   }
+//   for (i = 0; i < filter.length; i++) {
+//     index = crime_data_index[filter[i].column]
+
+//     // Point filter
+//     for (j = 0; j < filter[i].point.length; j++) {
+//       for (k = 0; k < crime_data.length; k++) {
+//         if (crime_data[k][index] == filter[i].point[j]) {
+//           filtered_data.add(crime_data[k]);
+//         }
+//       }
+//     }
+
+//     // Range filter (need to quantify range)
+//     for (j = 0; j < filter[i].range.length; j++) {
+//       for (k = 0; k < crime_data.length; k++) {
+//         if (filter[i].column == "Time Occurred" || filter[i].column == "Time Reported") {
+//           if (time_in_range(crime_data[k][index], filter[i].range[j][0], filter[i].range[j][1])) {
+//             filtered_data.add(crime_data[k]);
+//           }
+//         }
+//         if (filter[i].column == "Date Occurred" || filter[i].column == "Date Reported") {
+//           if (date_in_range(crime_data[k][index], filter[i].range[j][0], filter[i].range[j][1])) {
+//             filtered_data.add(crime_data[k]);
+//           }
+//         }
+//       }
+//     }
+
+
+//     // Contains filter (need to qualify contain function)
+//     for (j = 0; j < filter[i].contains.length; j++) {
+//       for (k = 0; k < crime_data.length; k++) {
+//         if (filter[i].column == "Time Occurred" || filter[i].column == "Time Reported") {
+//           if (time_in_contains(crime_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1])) {
+//             filtered_data.add(crime_data[k]);
+//           }
+//         }
+//         if (filter[i].column == "Date Occurred" || filter[i].column == "Date Reported") {
+//           if (date_in_contains(crime_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1])) {
+//             filtered_data.add(crime_data[k]);
+//           }
+//         }
+//       }
+//     }
+
+//   }
+
+
+//   filtered_data = Array.from(filtered_data);
+//   console.log(filtered_data);
+//   return filtered_data; 
+// }
 
 function query (filter) {
   filter = JSON.parse(filter);
   filter = filter.filter;
-  var filtered_data = new Set([]);;
+  var filtered_data = JSON.parse(JSON.stringify(crime_data));
+  if (filter.length == 0) {
+    return filtered_data;
+  }
   for (i = 0; i < filter.length; i++) {
+    var indices_to_remove = new Set([]);
+
     index = crime_data_index[filter[i].column]
 
     // Point filter
     for (j = 0; j < filter[i].point.length; j++) {
-      for (k = 0; k < crime_data.length; k++) {
-        if (crime_data[k][index] == filter[i].point[j]) {
-          filtered_data.add(crime_data[k]);
+      for (k = 0; k < filtered_data.length; k++) {
+        if (filtered_data[k][index] == filter[i].point[j]) {
+          indices_to_remove.add(k);
         }
       }
     }
 
     // Range filter (need to quantify range)
+    for (j = 0; j < filter[i].range.length; j++) {
+      for (k = 0; k < filtered_data.length; k++) {
+        if (filter[i].column == "Time Occurred" || filter[i].column == "Time Reported") {
+          if ((time_in_range(filtered_data[k][index], filter[i].range[j][0], filter[i].range[j][1]))) {
+            indices_to_remove.add(k);
+          }
+        }
+        if (filter[i].column == "Date Occurred" || filter[i].column == "Date Reported") {
+          if ((date_in_range(filtered_data[k][index], filter[i].range[j][0], filter[i].range[j][1]))) {
+            indices_to_remove.add(k);
+          }
+        }
+      }
+    }
+
 
     // Contains filter (need to qualify contain function)
+    for (j = 0; j < filter[i].contains.length; j++) {
+      for (k = 0; k < filtered_data.length; k++) {
+        if (filter[i].column == "Time Occurred" || filter[i].column == "Time Reported") {
+          if ((time_in_contains(filtered_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1]))) {
+            indices_to_remove.add(k);
+          }
+        }
+        if (filter[i].column == "Date Occurred" || filter[i].column == "Date Reported") {
+          if ((date_in_contains(filtered_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1]))) {
+            indices_to_remove.add(k);
+          }
+        }
+      }
+    }
+
+    var filtered_data_buffer = []
+    indices_to_remove = Array.from(indices_to_remove);
+    // console.log(indices_to_remove)
+    for (j = 0; j < indices_to_remove.length; j++) {
+      var item = filtered_data[indices_to_remove[j]];
+      filtered_data_buffer.push(item);
+    }
+    // console.log(filtered_data_buffer)
+    filtered_data = JSON.parse(JSON.stringify(filtered_data_buffer));
+    // console.log(filtered_data);
   }
-  filtered_data = Array.from(filtered_data);
-  // console.log(filtered_data);
+
+
+  // filtered_data = Array.from(filtered_data);
+  console.log(filtered_data);
+  return filtered_data; 
 }
+// query(filter);
 
-query(filter1);
-
-// filter = '{"filter": [{"column": "", "point": "", "range": "", "contains": ""}]}'
+// filter 1 -> 67 not 132
+// filter = '{"filter": [{"column": "name", "point": [point1, point2], "range": [(start,end)], "contains": [(part, value)]}]}'
 
 // &&& <= OR
 // ^^^ <= AND
 
 
+
+
+var filter1 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST", "DEMONSTRATION"], "range": [], "contains": []}]}'
+
+var filter2 = '{"filter": [{"column": "Date Occurred", "point": ["10/19/2016"], "range": [], "contains": []}]}'
+
+var filter3 = '{"filter": [{"column": "Time Occurred", "point": ["10:45AM", "8:12PM"], "range": [], "contains": []}]}'
+
+var filter4 = '{"filter": []}'
+
+var filter5 = '{"filter": [{"column": "Incident Type", "point": ["THEFT"], "range": [], "contains": []}]}'
+
+var filter6 = '{"filter": [{"column": "Incident Type", "point": ["THEFT"], "range": [], "contains": []}, {"column": "Time Occurred", "point": [], "range": [["9:28AM", "12:22PM"], ["8:00PM","10:00PM"]], "contains": []}]}'
+
+var filter7 = '{"filter": [{"column": "Incident Type", "point": ["THEFT"], "range": [], "contains": []}, {"column": "Time Occurred", "point": [], "range": [["8:00PM","11:59PM"], ["12:00AM","5:00AM"]], "contains": []}]}'
+
+// var markers = {};
 
 //// Map Generation
 // Initial Map: https://developers.google.com/maps/documentation/javascript/importing_data
@@ -173,7 +391,11 @@ function initMap() {
     mapTypeId: 'roadmap'
   });
 
-  var data = filtering("Incident Type", "UNWANTED GUEST");
+  // var filter = (typeof filter !== 'undefined') ?  filter : filter4;
+  // var data = filtering("Incident Type", "UNWANTED GUEST");
+  var data = query(filter4)
+  // var data = crime_data;
+  // console.log(crime_data);
   setMarkers(map, data);
 }
 
@@ -189,33 +411,40 @@ function initMap() {
 
 
 
-
 //// Windowed box
 // Example: https://developers.google.com/maps/documentation/javascript/examples/infowindow-simple
 // Example: http://jsfiddle.net/2crQ7/
 function setMarkers (map, data) {
   var marker, i;
   var unique_locations = unique_locations_set(data);
+  // var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
 
   for (i = 0; i < unique_locations.length; i++) {
-    var marker = new google.maps.Marker({
-      position: LatLng1(unique_locations[i]),
-      map: map 
-    });
-    
     var crimes = [];
+    var dummy = 0;
     var index = crime_data_index["Location"];
     for (j = 0; j < data.length; j++) {
       if (data[j][index].toUpperCase() == unique_locations[i].toUpperCase()) {
         crimes.push(data[j]);
+        dummy++;
       }
     }
+
+    var marker = new google.maps.Marker({
+      position: LatLng1(unique_locations[i]),
+      map: map,
+      icon: dummy1(dummy) 
+    });
 
     var content = "";
 
     for (j = 0; j < crimes.length; j++) {
       // console.log(crimes[j][crime_data_index["Description"]])
-      content += "<div>" + crimes[j][crime_data_index["Description"]] + "</div>"
+      content += 
+        "<div>" + crimes[j][crime_data_index["Description"]] + "</div>" +
+        "<div>" + crimes[j][crime_data_index["Date Occurred"]] + "</div>" +
+        "<div>" + crimes[j][crime_data_index["Time Occurred"]] + "</div>" +
+        "<div>" + crimes[j][crime_data_index["Incident Type"]] + "</div>"
     }
 
     var infowindow = new google.maps.InfoWindow();
@@ -225,5 +454,35 @@ function setMarkers (map, data) {
         infowindow.open(map, marker);
       };
     })(marker,content,infowindow));
+
+    // markers[i] = marker;
   }
+  // console.log(markers)
+  // dummy2(markers);
+}
+
+
+function dummy1(dummy) {
+  if (dummy > 1) {
+    return 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
+  }
+}
+
+// var lala;
+// function dummy2 (markers) {
+//   lala = markers;
+//   console.log(markers);
+// }
+
+// console.log(lala)
+// function delete_markers () {
+//   console.log(markers)
+// }
+// delete_markers()
+
+
+function test () {
+  var filter_query = document.getElementById('filter_query');
+  // console.log(JSON.parse(query.value))
+  initMap(query(filter_query.value));
 }
