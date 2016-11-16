@@ -84,14 +84,17 @@ function query (filter) {
     for (j = 0; j < filter[i].contains.length; j++) {
       for (k = 0; k < filtered_data.length; k++) {
         if (filter[i].column == "Time Occurred" || filter[i].column == "Time Reported") {
-          if ((time_in_contains(filtered_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1]))) {
+          if ((time_contains(filtered_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1]))) {
             indices_to_remove.add(k);
           }
         }
         if (filter[i].column == "Date Occurred" || filter[i].column == "Date Reported") {
-          if ((date_in_contains(filtered_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1]))) {
+          if ((date_contains(filtered_data[k][index], filter[i].contains[j][0], filter[i].contains[j][1]))) {
             indices_to_remove.add(k);
           }
+        }
+        if (filter[i].contains[j][0] == "TEXT" && filtered_data[k][index].includes(filter[i].contains[j][1])) {
+          indices_to_remove.add(k);
         }
       }
     }
@@ -250,7 +253,7 @@ function deleteMarkers() {
 //// Date and Time Filter Pre-Req Functions
 function date (day) {
   day = day.split("/").map(Number);
-  day = new Date(day[2], day[0]-1, day[1])
+  day = new Date(day[2]+2000, day[0]-1, day[1])
   // console.log(day)
   return day;
 }
