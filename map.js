@@ -110,7 +110,7 @@ function query (filter) {
 }
 
 var filter1 = '{"filter": []}';
-var filter2 = '{"filter": [{"column": "Incident Type", "point": ["THEFT"], "range": [], "contains": []}]}'
+var filter2 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST"], "range": [], "contains": []}]}'
 // console.log(query(filter2));
 
 //// Converts place address to Coordinates
@@ -311,3 +311,13 @@ function time_contains (time, part, value) {
     return (time%100 == value)
   }
 }
+
+
+
+// Experimental Code
+function test () {
+  deleteMarkers();
+  var data = unique_locations_set(query(filter2));
+  addSetMarkers(data);
+}
+
