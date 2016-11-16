@@ -5,7 +5,7 @@
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        height: 90%;
+        height: 100%;
         width: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
@@ -17,8 +17,15 @@
     </style>
   </head>
 
-  <body onload="initMap();">
-    <div id="filter">Filter: <input id="filter_query" type="text" name="filtertext"><input type="submit" onclick="test()"></div>
+  <body onload="initMap()">
+    <!-- <div id="filter">Filter: <input id="filter_query" type="text" name="filtertext"><input type="submit" onclick="test()"></div> -->
+
+    <div id="floating-panel">
+      <input onclick="clearMarkers();" type=button value="Hide Markers">
+      <input onclick="showMarkers();" type=button value="Show All Markers">
+      <input onclick="deleteMarkers();" type=button value="Delete Markers">
+    </div>
+    
     <div id="map"></div>
 
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
