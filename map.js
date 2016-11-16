@@ -109,6 +109,8 @@ function query (filter) {
   return filtered_data;
 }
 
+//// FILTERS
+// var filter = '{"filter": [{"column": "name", "point": [point1, point2], "range": [[start,end], [start, end]], "contains": [[part, value]]}]}'
 var filter1 = '{"filter": []}';
 var filter2 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST"], "range": [], "contains": []}]}'
 // console.log(query(filter2));
@@ -159,6 +161,7 @@ function content (location) {
 // In the following example, markers appear when the user clicks on the map.
 // The markers are stored in an array.
 // The user can then click an option to hide, show or delete the markers.
+// Source: https://jsfiddle.net/api/post/library/pure/
 var map;
 var markers = [];
 
@@ -279,7 +282,7 @@ function date_contains (day, part, value) {
 function time_format (time) {
   var num = parseInt(time.substring(0, time.length - 2).split(":").join(""))
   if (time[time.length-2] == "P") {
-    if (num > 1200) {
+    if (num >= 1200) {
       num = num;
     }
     else {
@@ -289,7 +292,7 @@ function time_format (time) {
   else if (time[time.length-2] == "A" && num >= 1200) {
     num = num - 1200;
   }
-  // console.log(num)
+  console.log(num)
   return num;
 }
 
@@ -297,8 +300,14 @@ function time_in_range (time, start, end) {
   time = time_format(time);
   start = time_format(start);
   end = time_format(end);
+  if (start <= end) {
+    return (start <= time && time <= end);
+  }
+  else {
+    return (start <= time || time <= end);
+  }
   // console.log((start <= time && time <= end));
-  return (start <= time && time <= end);
+  // return (start <= time && time <= end);
 }
 
 function time_contains (time, part, value) {
@@ -317,7 +326,19 @@ function time_contains (time, part, value) {
 // Experimental Code
 function test () {
   deleteMarkers();
-  var data = unique_locations_set(query(filter2));
+  var filter = generate_filter();
+  var data = unique_locations_set(query(filter));
   addSetMarkers(data);
 }
 
+function generate_filter () {
+  var column = document.getElementById("filter1_column").value;
+  var point = document.getElementById("filter1_point").value;
+  var range = document.getElementById("filter1_range").value;
+  var contains = document.getElementById("filter1_contains").value;
+
+  var filter = '{"filter": [{"column": ' + column + ', "point": [' + point + '], "range": [' + range + '], "contains": [' + contains + ']}]}'
+
+  console.log(filter);
+  return filter;
+}

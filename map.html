@@ -18,13 +18,15 @@
   </head>
 
   <body onload="initMap()">
-    <!-- <div id="filter">Filter: <input id="filter_query" type="text" name="filtertext"><input type="submit" onclick="test()"></div> -->
-
-    <div id="floating-panel">
-      <input onclick="clearMarkers();" type=button value="Hide Markers">
-      <input onclick="showMarkers();" type=button value="Show All Markers">
-      <input onclick="deleteMarkers();" type=button value="Delete Markers">
-      <input onclick="test();" type=button value="Test">
+    <div id="filter">
+      Filter: 
+      <br>
+      Type: <input id="filter1_column" type="text">
+      Values: <input id="filter1_point" type="text">
+      Ranges: <input id="filter1_range" type="text">
+      Contains: <input id="filter1_contains" type="text">      
+      <br>
+      <input type="submit" onclick="test()">
     </div>
     
     <div id="map"></div>
