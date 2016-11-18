@@ -1,7 +1,7 @@
 //// Crime Data Loaded
 // http://eloquentjavascript.net/1st_edition/chapter14.html
 var request = new XMLHttpRequest();
-request.open("GET", "sample_data/small_powerful.txt", false);
+request.open("GET", "sample_data/large_powerful.txt", false);
 request.send(null);
 
 var crime_data = request.responseText;
@@ -167,6 +167,7 @@ function content (location) {
 // Source: https://jsfiddle.net/api/post/library/pure/
 var map;
 var markers = [];
+var markerCluster;
 
 function initMap() {
   var Harvard = {lat: 42.374, lng: -71.117};
@@ -240,6 +241,17 @@ function clearMarkers() {
 // Shows any markers currently in the array.
 function showMarkers() {
   setMapOnAll(map);
+}
+
+// Creates marker clusters
+function createCluster (zoom) {
+  var zoom = (typeof zoom !== 'undefined') ?  zoom : 15;
+  if (markerCluster == undefined || markerCluster["markers_"].length == 0) {
+    markerCluster = new MarkerClusterer(map, markers, {
+      imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+      maxZoom: zoom
+    });
+  }
 }
 
 // Deletes all markers in the array by removing references to them.
@@ -326,14 +338,41 @@ function time_contains (time, part, value) {
 
 
 
-// Experimental Code
-function test () {
+//// Clustering Code
+
+// Activates the feature
+function clusterActivate () {
+  var zoom = document.getElementById("cluster_zoom").value;
+  if (markerCluster != undefined && markerCluster["maxZoom_"] != zoom) {
+    clusterDeactivate();
+  }
+  createCluster(zoom);
+}
+
+// Deactivate the feature
+function clusterDeactivate () {
+  if (markerCluster != undefined && markerCluster["markers_"].length > 0) {
+    markerCluster.clearMarkers();
+    showMarkers();
+  }
+}
+
+//// UI work for the filter option
+
+// Makes changes to the map accordingly
+function search () {
+  var cluster_active = markerCluster["markers_"].length > 0;
+  clusterDeactivate();
   deleteMarkers();
   var filter = generate_filter();
   var data = unique_locations_set(query(filter));
   addSetMarkers(data);
+  if (cluster_active) {
+    clusterActivate();
+  }
 }
 
+// Takes inputs and converts to filter JSON format
 function generate_filter () {
   var column = document.getElementById("filter1_column").value;
   var point = document.getElementById("filter1_point").value;
