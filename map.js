@@ -173,7 +173,7 @@ function initMap() {
   var Harvard = {lat: 42.374, lng: -71.117};
 
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 16,
+    zoom: 14,
     center: Harvard,
     mapTypeId: 'roadmap'
   });
@@ -436,7 +436,36 @@ function generate_filter () {
   return filter;
 }
 
+// Resets to show all data points
 function reset () {
+  clusterDeactivate(); 
   var filter = '{"filter": []}';
   search (filter);
 }
+
+var stat1;
+var stat2;
+function store (i) {
+  if (i == 1) {
+    stat1 = [markers, markerCluster];
+  }
+  else {
+    stat2 = [markers, markerCluster];
+  }
+}
+
+function toggle (i) {
+  var stat;
+  if (i == 1) {
+    stat = stat1;
+  }
+  else {
+    stat = stat2;
+  }
+  clusterDeactivate();
+  deleteMarkers();
+  markers = stat[0];
+  markerCluster = stat[1];
+  showMarkers();
+}
+

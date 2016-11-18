@@ -5,7 +5,7 @@
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        height: 80%;
+        height: 75%;
         width: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
@@ -59,8 +59,15 @@
       <input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()">
       <input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()">
     </div>
-    
 
+    <br>
+
+    <div id="storeState">
+      <input type="submit" value="Store State 1" onclick="store(1)">
+      <input type="submit" value="Store State 2" onclick="store(2)">
+      <input type="submit" value="Toggle On State 1" onclick="toggle(1)">
+      <input type="submit" value="Toggle On State 2" onclick="toggle(2)">
+    </div>
 
     <div id="map"></div>
 
