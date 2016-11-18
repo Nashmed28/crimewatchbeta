@@ -5,7 +5,7 @@
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        height: 90%;
+        height: 80%;
         width: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
@@ -17,22 +17,46 @@
     </style>
   </head>
 
-  <body onload="initMap()">
+  <body onload="initMap(); form();">
     <div id="filter">
       Filter: 
       <br>
-      Type: <input id="filter1_column" type="text">
-      Values: <input id="filter1_point" type="text">
-      Ranges: <input id="filter1_range" type="text">
-      Contains: <input id="filter1_contains" type="text">      
+      <div id="filter1">
+        Type: 
+        <select id="filter1_column"></select>
+        Values: <input id="filter1_point" type="text">
+        Ranges: <input id="filter1_range" type="text">
+        Contains: <input id="filter1_contains" type="text"> 
+        <input id="addrow" type="submit" value="Add Row" onclick="addrow()">
+        <br>
+      </div>
+    </div>
+
+    <div id="filter_submit">     
       <input type="submit" onclick="search()">
+      <input type="submit" value="Reset" onclick="reset()">
     </div>
     
     <br>
 
     <div id="clustering">
-      Cluster Zoom: <input id="cluster_zoom" value="15" type="text">
+      Cluster Zoom:   
+      <select id="cluster_zoom">
+        <option value="7">7 (tri-state)</option>
+        <option value="8">8</option>
+        <option value="9">9 (state)</option>
+        <option value="10">10</option>
+        <option value="11">11 (cities)</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14 (districts)</option>
+        <option selected value="15">15 (neighborhoods)</option>
+        <option value="16">16 (blocks)</option>
+        <option value="17">17 (street)</option>
+        <option value="18">18</option>
+      </select>
       <input type="submit" value="Activate Cluster" onclick="clusterActivate()">
+      <input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()">
       <input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()">
     </div>
     
@@ -40,11 +64,10 @@
 
     <div id="map"></div>
 
-    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-    </script>
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEZR5lSww__GQwr3V_Tu0NQKQpzCO5J8k">
-    </script>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEZR5lSww__GQwr3V_Tu0NQKQpzCO5J8k"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="map.js"></script>
   
   </body>

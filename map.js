@@ -284,7 +284,7 @@ function date_contains (day, part, value) {
     return (day.getFullYear() == value);
   }
   else if (part == "MONTH") {
-    return (day.getMonth() == value);
+    return (day.getMonth() == value - 1);
   }
   else if (part == "DAY") {
     return (day.getDate() == value);
@@ -341,8 +341,8 @@ function time_contains (time, part, value) {
 //// Clustering Code
 
 // Activates the feature
-function clusterActivate () {
-  var zoom = document.getElementById("cluster_zoom").value;
+function clusterActivate (zoom) {
+  var zoom = (typeof zoom !== 'undefined') ?  zoom : document.getElementById("cluster_zoom").value;
   if (markerCluster != undefined && markerCluster["maxZoom_"] != zoom) {
     clusterDeactivate();
   }
@@ -357,30 +357,86 @@ function clusterDeactivate () {
   }
 }
 
+// Activate cluster at the current zoom level
+function clusterActivate_CurrentLevel () {
+  var zoom = map["zoom"];
+  clusterActivate(zoom);
+}
+
 //// UI work for the filter option
 
+// Calls all HTML generating JS function
+function form () {
+  column_select(1);
+}
+
+// Make list of columns to select from
+function column_select (n) {
+  var html = "<option id='default_" + n + "' value=''>---</option>";
+  var options = Object.keys(crime_data_index);
+  for (i = 0; i < options.length; i++) {
+    html += "<option id='" + options[i] + "_" + n + "' value='" + options[i] + "'>" + options[i] + "</option>";
+  }
+  $("#filter" + n + "_column").append(html);
+}
+
+// Add another row for filtering
+var filter_row = 1;
+function addrow() {
+  var n = filter_row + 1;
+  var html =
+  "<div id='filter" + n + "'>" +
+    "Type: " + 
+    "<select id='filter" + n + "_column'></select> " +
+    "Values: <input id='filter" + n + "_point' type='text'> " +
+    "Ranges: <input id='filter" + n + "_range' type='text'> " +
+    "Contains: <input id='filter" + n + "_contains' type='text'> " + 
+    "<input id='removerow" + n + "' type='submit' value='Remove Row' onclick='removerow(" + n + ")'>" +
+    "<br>" + 
+  "</div>";
+  $("#filter").append(html);
+  column_select(n);
+  filter_row++;     
+}
+
+// Removes the row
+function removerow (n) {
+  $("#filter" + n).remove();
+}
+
 // Makes changes to the map accordingly
-function search () {
-  var cluster_active = markerCluster["markers_"].length > 0;
+function search (filter) {
+  var filter = (typeof filter !== 'undefined') ?  filter : generate_filter();
+  var cluster_active = markerCluster != undefined && markerCluster["markers_"].length > 0;
   clusterDeactivate();
   deleteMarkers();
-  var filter = generate_filter();
   var data = unique_locations_set(query(filter));
   addSetMarkers(data);
   if (cluster_active) {
-    clusterActivate();
+    clusterActivate(markerCluster["maxZoom_"]);
   }
 }
 
 // Takes inputs and converts to filter JSON format
 function generate_filter () {
-  var column = document.getElementById("filter1_column").value;
-  var point = document.getElementById("filter1_point").value;
-  var range = document.getElementById("filter1_range").value;
-  var contains = document.getElementById("filter1_contains").value;
+  var filter = '{"filter": [';
+  for (i = 1; i <= filter_row; i++) {
+    if (document.getElementById("filter" + i) !== null) {
+      var column = document.getElementById("filter" + i + "_column").value;
+      var point = document.getElementById("filter" + i + "_point").value;
+      var range = document.getElementById("filter" + i + "_range").value;
+      var contains = document.getElementById("filter" + i + "_contains").value;
 
-  var filter = '{"filter": [{"column": ' + column + ', "point": [' + point + '], "range": [' + range + '], "contains": [' + contains + ']}]}'
-
+      filter += '{"column": "' + column + '", "point": [' + point + '], "range": [' + range + '], "contains": [' + contains + ']},';
+    }
+  }
+  filter = filter.slice(0,-1);
+  filter += ']}';
   console.log(filter);
   return filter;
+}
+
+function reset () {
+  var filter = '{"filter": []}';
+  search (filter);
 }
