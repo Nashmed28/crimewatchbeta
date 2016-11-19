@@ -496,5 +496,25 @@ function showStates () {
 //// Making a new map adjacent
 var map2;
 function newMap () {
-  console.log("wow")
+  var mapdiv = document.getElementById("map");
+  var map2div = document.getElementById("map2");
+  
+  mapdiv.style.width = "49%";
+
+  var top = String(mapdiv.offsetTop);
+  top += "px";
+  
+  map2div.style.position = "absolute";
+  map2div.style.left = "50%";
+  map2div.style.top = top;
+
+  // console.log(mapdiv.offsetTop)
+
+  var Harvard = {lat: 42.374, lng: -71.117};
+
+  map2 = new google.maps.Map(map2div, {
+    zoom: 14,
+    center: Harvard,
+    mapTypeId: 'roadmap'
+  });
 }
