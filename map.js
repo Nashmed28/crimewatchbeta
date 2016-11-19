@@ -114,8 +114,8 @@ function query (filter) {
 
 //// FILTERS
 // var filter = '{"filter": [{"column": "name", "point": [point1, point2], "range": [[start,end], [start, end]], "contains": [[part, value]]}]}'
-var filter1 = '{"filter": []}';
-var filter2 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST"], "range": [], "contains": []}]}'
+// var filter1 = '{"filter": []}';
+// var filter2 = '{"filter": [{"column": "Incident Type", "point": ["UNWANTED GUEST"], "range": [], "contains": []}]}'
 // console.log(query(filter2));
 
 //// Converts place address to Coordinates
@@ -187,7 +187,7 @@ function initMap() {
   // addMarker(Harvard);
 
   // Adds markers from the dataset
-  var data = unique_locations_set(query(filter1));
+  var data = unique_locations_set(query(g_filter));
   addSetMarkers(data);
 }
 
@@ -415,6 +415,7 @@ function search (filter) {
   if (cluster_active) {
     clusterActivate(markerCluster["maxZoom_"]);
   }
+  g_filter = filter;
 }
 
 // Takes inputs and converts to filter JSON format
@@ -441,17 +442,27 @@ function reset () {
   clusterDeactivate(); 
   var filter = '{"filter": []}';
   search (filter);
+  g_filter = filter;
 }
 
+
+//// Storing state function
 var stat1;
 var stat2;
+var g_filter = '{"filter": []}';
+var filter1 = "";
+var filter2 = "";
 function store (i) {
   if (i == 1) {
-    stat1 = [markers, markerCluster];
+    stat1 = [markers, markerCluster != undefined && markerCluster["markers_"].length > 0];
+    filter1 = g_filter;
   }
   else {
-    stat2 = [markers, markerCluster];
+    stat2 = [markers, markerCluster != undefined && markerCluster["markers_"].length > 0];
+    filter2 = g_filter;
   }
+  // console.log(stat1)
+  showStates();
 }
 
 function toggle (i) {
@@ -465,7 +476,25 @@ function toggle (i) {
   clusterDeactivate();
   deleteMarkers();
   markers = stat[0];
-  markerCluster = stat[1];
   showMarkers();
+  if (stat[1]) {
+    // ONE BUG: Uses default (15) as zoom and not actual prev. zoom.
+    clusterActivate();
+  }
 }
 
+function showStates () {
+  var div = document.getElementById("storeStateInfo");
+  var html = 
+    "State 1: " + filter1 +
+    "<br>" +
+    "State 2: " + filter2;
+  div.innerHTML = html;
+}
+
+
+//// Making a new map adjacent
+var map2;
+function newMap () {
+  console.log("wow")
+}
