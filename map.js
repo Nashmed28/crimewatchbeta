@@ -165,9 +165,53 @@ function content (location) {
 // The markers are stored in an array.
 // The user can then click an option to hide, show or delete the markers.
 // Source: https://jsfiddle.net/api/post/library/pure/
+// https://developers.google.com/maps/documentation/javascript/examples/control-positioning
+// https://developers.google.com/maps/documentation/javascript/examples/control-custom-state
 var map;
 var markers = [];
 var markerCluster;
+
+
+/**
+ * The CenterControl adds a control to the map that recenters the map on
+ * Chicago.
+ * This constructor takes the control DIV as an argument.
+ * @constructor
+ */
+function CenterControl(controlDiv, map) {
+  var html = '<div id="filter">Filter: <br><div id="filter1">Type: <select id="filter1_column">' + column_select(1) + '</select>Values: <input id="filter1_point" type="text">Ranges: <input id="filter1_range" type="text">Contains: <input id="filter1_contains" type="text"> <input id="addrow" type="submit" value="Add Row" onclick="addrow()"><br></div></div><div id="filter_submit"><input type="submit" onclick="search()"><input type="submit" value="Reset" onclick="reset()"></div><br><div id="clustering">Cluster Zoom:<select id="cluster_zoom"><option value="7">7 (tri-state)</option><option value="8">8</option><option value="9">9 (state)</option><option value="10">10</option><option value="11">11 (cities)</option><option value="12">12</option><option value="13">13</option><option value="14">14 (districts)</option><option selected value="15">15 (neighborhoods)</option><option value="16">16 (blocks)</option><option value="17">17 (street)</option><option value="18">18</option></select><input type="submit" value="Activate Cluster" onclick="clusterActivate()"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()"></div><br><div id="storeState"><input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="See State 2 on Separate Map" onclick="newMap()"></div><div id="storeStateInfo">State 1: <br>State 2: </div>'
+
+  // Set CSS for the control border.
+  var controlUI = document.createElement('div');
+  controlUI.style.backgroundColor = '#fff';
+  controlUI.style.border = '1px solid #fff';
+  controlUI.style.borderRadius = '2px';
+  controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+  controlUI.style.cursor = 'pointer';
+  controlUI.style.marginBottom = '14px';
+  controlUI.style.textAlign = 'left';
+  controlUI.title = 'Options: Filtering/Clustering/Store';
+  controlDiv.appendChild(controlUI);
+
+  // Set CSS for the control interior.
+  var controlText = document.createElement('div');
+  controlText.style.color = 'rgb(25,25,25)';
+  controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+  controlText.style.fontSize = '12px';
+  controlText.style.lineHeight = '28px';
+  controlText.style.paddingLeft = '5px';
+  controlText.style.paddingRight = '5px';
+  controlText.innerHTML = html;
+  controlUI.appendChild(controlText);
+
+  // Setup the click event listeners: simply set the map to Chicago.
+  // controlUI.addEventListener('click', function() {
+  //   map.setCenter(chicago);
+  // });
+
+}
+
+
 
 function initMap() {
   var Harvard = {lat: 42.374, lng: -71.117};
@@ -175,8 +219,40 @@ function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     zoom: 14,
     center: Harvard,
-    mapTypeId: 'roadmap'
+    mapTypeId: 'roadmap',
+ 
+    mapTypeControl: true,
+    mapTypeControlOptions: {
+      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+      position: google.maps.ControlPosition.BOTTOM_CENTER
+    },
+
+    zoomControl: true,
+    zoomControlOptions: {
+      position: google.maps.ControlPosition.LEFT_CENTER
+    },
+    
+    scaleControl: true,
+    
+    streetViewControl: true,
+    streetViewControlOptions: {
+      position: google.maps.ControlPosition.CENTER_BOTTOM
+    },
+    
+    fullscreenControl: true
   });
+
+
+
+  // Create the DIV to hold the control and call the CenterControl()
+  // constructor passing in this DIV.
+  var centerControlDiv = document.createElement('div');
+  var centerControl = new CenterControl(centerControlDiv, map);
+
+  centerControlDiv.index = 1;
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
+
+
 
   // This event listener will call addMarker() when the map is clicked.
   // map.addListener('click', function(event) {
@@ -378,6 +454,7 @@ function column_select (n) {
     html += "<option id='" + options[i] + "_" + n + "' value='" + options[i] + "'>" + options[i] + "</option>";
   }
   $("#filter" + n + "_column").append(html);
+  return html;
 }
 
 // Add another row for filtering
@@ -493,6 +570,14 @@ function showStates () {
 }
 
 
+
+
+
+
+
+
+
+
 //// Making a new map adjacent
 var map2;
 function newMap () {
@@ -517,4 +602,30 @@ function newMap () {
     center: Harvard,
     mapTypeId: 'roadmap'
   });
+
+  var data = unique_locations_set(query(filter2));
+  addSetMarkers2(data);
+}
+
+function addSetMarkers2 (data) {
+  var locations = Object.keys(data);
+  var marker, i;
+  for (i = 0; i < locations.length; i++) {
+    var marker = new google.maps.Marker({
+      position: LatLng(locations[i]),
+      map: map2
+    }); 
+
+    info2(marker, i, data[locations[i]]);
+  }
+}
+
+function info2(marker, i, location) {
+  var infowindow = new google.maps.InfoWindow();
+  google.maps.event.addListener(marker, 'click', (function(marker, i) {
+    return function() {
+      infowindow.setContent(content(location));
+      infowindow.open(map2, marker);
+    }
+  })(marker, i));
 }
