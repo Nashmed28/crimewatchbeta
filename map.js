@@ -179,7 +179,9 @@ var markerCluster;
  * @constructor
  */
 function CenterControl(controlDiv, map) {
-  var html = '<div id="filter">Filter: <br><div id="filter1">Type: <select id="filter1_column">' + column_select(1) + '</select>Values: <input id="filter1_point" type="text">Ranges: <input id="filter1_range" type="text">Contains: <input id="filter1_contains" type="text"> <input id="addrow" type="submit" value="Add Row" onclick="addrow()"><br></div></div><div id="filter_submit"><input type="submit" onclick="search()"><input type="submit" value="Reset" onclick="reset()"></div><br><div id="clustering">Cluster Zoom:<select id="cluster_zoom"><option value="7">7 (tri-state)</option><option value="8">8</option><option value="9">9 (state)</option><option value="10">10</option><option value="11">11 (cities)</option><option value="12">12</option><option value="13">13</option><option value="14">14 (districts)</option><option selected value="15">15 (neighborhoods)</option><option value="16">16 (blocks)</option><option value="17">17 (street)</option><option value="18">18</option></select><input type="submit" value="Activate Cluster" onclick="clusterActivate()"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()"></div><br><div id="storeState"><input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="See State 2 on Separate Map" onclick="newMap()"></div><div id="storeStateInfo">State 1: <br>State 2: </div>'
+  var html_full = '<div id="filter">Filter: <br><div id="filter1">Type: <select id="filter1_column">' + column_select(1) + '</select>Values: <input id="filter1_point" type="text">Ranges: <input id="filter1_range" type="text">Contains: <input id="filter1_contains" type="text"> <input id="addrow" type="submit" value="Add Row" onclick="addrow()"><br></div></div><div id="filter_submit"><input type="submit" onclick="search()"><input type="submit" value="Reset" onclick="reset()"></div><br><div id="clustering">Cluster Zoom:<select id="cluster_zoom"><option value="7">7 (tri-state)</option><option value="8">8</option><option value="9">9 (state)</option><option value="10">10</option><option value="11">11 (cities)</option><option value="12">12</option><option value="13">13</option><option value="14">14 (districts)</option><option selected value="15">15 (neighborhoods)</option><option value="16">16 (blocks)</option><option value="17">17 (street)</option><option value="18">18</option></select><input type="submit" value="Activate Cluster" onclick="clusterActivate()"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()"></div><br><div id="storeState"><input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="See State 2 on Separate Map" onclick="newMap()"></div><div id="storeStateInfo">State 1: <br>State 2: </div>'
+
+  var html_bar = '<input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Full Menu" id="full_menu">'
 
   // Set CSS for the control border.
   var controlUI = document.createElement('div');
@@ -198,17 +200,17 @@ function CenterControl(controlDiv, map) {
   controlText.style.color = 'rgb(25,25,25)';
   controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
   controlText.style.fontSize = '12px';
-  controlText.style.lineHeight = '28px';
+  controlText.style.lineHeight = '20px';
   controlText.style.paddingLeft = '5px';
   controlText.style.paddingRight = '5px';
-  controlText.innerHTML = html;
+  controlText.innerHTML = html_full;
   controlUI.appendChild(controlText);
 
   // Setup the click event listeners: simply set the map to Chicago.
-  // controlUI.addEventListener('click', function() {
-  //   map.setCenter(chicago);
-  // });
-
+  controlUI.addEventListener('dblclick', function() {
+    console.log(controlText.innerHTML)
+    controlText.innerHTML = html_bar;
+  });
 }
 
 
@@ -246,11 +248,11 @@ function initMap() {
 
   // Create the DIV to hold the control and call the CenterControl()
   // constructor passing in this DIV.
-  var centerControlDiv = document.createElement('div');
-  var centerControl = new CenterControl(centerControlDiv, map);
+  // var centerControlDiv = document.createElement('div');
+  // var centerControl = new CenterControl(centerControlDiv, map);
 
-  centerControlDiv.index = 1;
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
+  // centerControlDiv.index = 1;
+  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
 
 
@@ -283,7 +285,9 @@ function addSetMarkers(data) {
   for (i = 0; i < locations.length; i++) {
     var marker = new google.maps.Marker({
       position: LatLng(locations[i]),
-      map: map
+      map: map,
+      icon: 'https://maps.gstatic.com/intl/en_us/mapfiles/markers2/measle_blue.png'
+      // label: String(data[locations[1]].length)
     }); 
     markers.push(marker);
 
