@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
+
+  	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  	<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+  </head>
+  <body>
+
+
+<!-- Date: range -->
+<div class="flex option date_range">
+  <div class="text">From</div>
+  <div class="input-group date" data-date-format="mm/dd/yyyy">
+    <input class="form-control" type="text" placeholder="mm/dd/yyyy" id="start_" />
+    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+  </div>
+
+
+  <div class="text">to</div>
+
+
+  <div class="input-group date" data-date-format="mm/dd/yyyy">
+    <input class="form-control" type="text" placeholder="mm/dd/yyyy" id="end_" />
+    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+  </div>
+  <div class="trashcan"><img src="http://downloadicons.net/sites/default/files/trash-can-icon-63148.png" alt="delete" style="width:20px;height:20px;" onclick="delete_input(this)"></div>
+</div>
+
+<br>
+
+<!-- Date Value -->
+<div class="flex option date_value">
+  <div class="text">Date:</div>
+  <div class="input-group date" data-date-format="mm/dd/yyyy">
+    <input class="form-control" type="text" placeholder="mm/dd/yyyy" />
+    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+  </div>
+  <div class="trashcan"><img src="http://downloadicons.net/sites/default/files/trash-can-icon-63148.png" alt="delete" style="width:20px;height:20px;" onclick="delete_input(this)"></div>
+</div>
+
+<br>
+
+<!-- Date Contains -->
+<div class="flex option date_contains">
+  <div class="text">By:</div>
+  <div class="input-group contains">
+    <select class="form-control dropdown" onchange="date_contain_second_parameter(this.value)">
+    <option value="default"> ----- Please select ----- </option>
+    <option value="year">Year</option>
+    <option value="month">Month</option>
+    <option value="day">Day of the Week</option>
+  </select>
+  </div>
+  <div class="text">on:</div>
+  <div class="input-group contains">
+    <select class="form-control dropdown" id="choices">
+    <option> --------------------------- </option>
+  </select>
+  </div>
+
+  <div class="trashcan"><img src="http://downloadicons.net/sites/default/files/trash-can-icon-63148.png" alt="delete" style="width:20px;height:20px;" onclick="delete_input(this)"></div>
+</div>
+
+<br>
+
+<!-- Time Value -->
+<div class="flex option time_value">
+  <div class="text">Time:</div>
+  <div class="input-group time">
+    <input class="form-control timepicker" type="text" placeholder="HH:MM AM/PM" />
+    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+  </div>
+  <div class="trashcan"><img src="http://downloadicons.net/sites/default/files/trash-can-icon-63148.png" alt="delete" style="width:20px;height:20px;" onclick="delete_input(this)"></div>
+</div>
+
+
+<br>
+
+<!-- Time Range -->
+<div class="flex option time_range">
+  <div class="text">From</div>
+  <div class="input-group time">
+    <input class="form-control timepicker" type="text" placeholder="HH:MM AM/PM" />
+    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+  </div>
+
+  <div class="text">to</div>
+  <div class="input-group time">
+    <input class="form-control timepicker" type="text" placeholder="HH:MM AM/PM" />
+    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+  </div>
+
+  <div class="trashcan"><img src="http://downloadicons.net/sites/default/files/trash-can-icon-63148.png" alt="delete" style="width:20px;height:20px;" onclick="delete_input(this)"></div>
+</div>
+
+<br>
+
+<!-- Other Value -->
+<div class="flex">
+	<div class="flex option other_value">
+	  <div class="text">Value:</div>
+	  <div class="input-group others" data-date-format="mm/dd/yyyy">
+	    <input class="form-control" type="Text" placeholder="text" />
+	    <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+	  </div>
+	  <div class="trashcan"><img src="http://downloadicons.net/sites/default/files/trash-can-icon-63148.png" alt="delete" style="width:20px;height:20px;" onclick="delete_input(this)"></div>
+	</div>
+	<div class="spacer"></div>
+	<div class="adding" onclick="test()"><span class="glyphicon glyphicon-plus"></span></div>
+</div>
+
+
+
+
+
+
+
+
+<div class="flex categories_option">
+  <div class="text">Filter by:</div>
+  <div class="input-group categories">
+    <select class="form-control filter_categories" onchange="ask_for_request(this.value)">
+    <option value="default"> ----- Please select ----- </option>
+    <option value="date">Date</option>
+    <option value="time">Time</option>
+    <option value="crimetype">Crime Type</option>
+    <option value="disposition">Disposition</option>
+    <option value="description">Description</option>
+    </select>
+  </div>
+  <div id="filter_forms">
+  </div>
+</div>
+
+<div id="output"></div>
+
+
+
+
+
+  	<link rel="stylesheet" type="text/css" href="form.css">
+  	<script src="form.js"></script>
+
+  </body>
+</html>

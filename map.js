@@ -179,9 +179,12 @@ var markerCluster;
  * @constructor
  */
 function CenterControl(controlDiv, map) {
-  var html_full = '<div id="filter">Filter: <br><div id="filter1">Type: <select id="filter1_column">' + column_select(1) + '</select>Values: <input id="filter1_point" type="text">Ranges: <input id="filter1_range" type="text">Contains: <input id="filter1_contains" type="text"> <input id="addrow" type="submit" value="Add Row" onclick="addrow()"><br></div></div><div id="filter_submit"><input type="submit" onclick="search()"><input type="submit" value="Reset" onclick="reset()"></div><br><div id="clustering">Cluster Zoom:<select id="cluster_zoom"><option value="7">7 (tri-state)</option><option value="8">8</option><option value="9">9 (state)</option><option value="10">10</option><option value="11">11 (cities)</option><option value="12">12</option><option value="13">13</option><option value="14">14 (districts)</option><option selected value="15">15 (neighborhoods)</option><option value="16">16 (blocks)</option><option value="17">17 (street)</option><option value="18">18</option></select><input type="submit" value="Activate Cluster" onclick="clusterActivate()"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()"></div><br><div id="storeState"><input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="See State 2 on Separate Map" onclick="newMap()"></div><div id="storeStateInfo">State 1: <br>State 2: </div>'
+  // var html_full = '<div id="filter">Filter: <br><div id="filter1">Type: <select id="filter1_column">' + column_select(1) + '</select>Values: <input id="filter1_point" type="text">Ranges: <input id="filter1_range" type="text">Contains: <input id="filter1_contains" type="text"> <input id="addrow" type="submit" value="Add Row" onclick="addrow()"><br></div></div><div id="filter_submit"><input type="submit" onclick="search()"><input type="submit" value="Reset" onclick="reset()"></div><br><div id="clustering">Cluster Zoom:<select id="cluster_zoom"><option value="7">7 (tri-state)</option><option value="8">8</option><option value="9">9 (state)</option><option value="10">10</option><option value="11">11 (cities)</option><option value="12">12</option><option value="13">13</option><option value="14">14 (districts)</option><option selected value="15">15 (neighborhoods)</option><option value="16">16 (blocks)</option><option value="17">17 (street)</option><option value="18">18</option></select><input type="submit" value="Activate Cluster" onclick="clusterActivate()"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()"></div><br><div id="storeState"><input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="See State 2 on Separate Map" onclick="newMap()"></div><div id="storeStateInfo">State 1: <br>State 2: </div>'
 
-  var html_bar = '<input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Full Menu" id="full_menu">'
+  // var html_bar = '<input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Full Menu" id="full_menu">'
+
+  var html_bar = '<input type="submit" value="Store State 1" onclick="store(1)"><input type="submit" value="Store State 2" onclick="store(2)"><input type="submit" value="Toggle On State 1" onclick="toggle(1)"><input type="submit" value="Toggle On State 2" onclick="toggle(2)"><input type="submit" value="Activate Cluster at Current Level" onclick="clusterActivate_CurrentLevel()"><input type="submit" value="Deactivate Cluster" onclick="clusterDeactivate()"><input type="submit" value="Filter" id="filter_window" onclick="appear()">'
+
 
   // Set CSS for the control border.
   var controlUI = document.createElement('div');
@@ -203,14 +206,14 @@ function CenterControl(controlDiv, map) {
   controlText.style.lineHeight = '20px';
   controlText.style.paddingLeft = '5px';
   controlText.style.paddingRight = '5px';
-  controlText.innerHTML = html_full;
+  controlText.innerHTML = html_bar;
   controlUI.appendChild(controlText);
 
   // Setup the click event listeners: simply set the map to Chicago.
-  controlUI.addEventListener('dblclick', function() {
-    console.log(controlText.innerHTML)
-    controlText.innerHTML = html_bar;
-  });
+  // controlUI.addEventListener('dblclick', function() {
+  //   console.log(controlText.innerHTML)
+  //   controlText.innerHTML = html_bar;
+  // });
 }
 
 
@@ -248,11 +251,11 @@ function initMap() {
 
   // Create the DIV to hold the control and call the CenterControl()
   // constructor passing in this DIV.
-  // var centerControlDiv = document.createElement('div');
-  // var centerControl = new CenterControl(centerControlDiv, map);
+  var centerControlDiv = document.createElement('div');
+  var centerControl = new CenterControl(centerControlDiv, map);
 
-  // centerControlDiv.index = 1;
-  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
+  centerControlDiv.index = 1;
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(centerControlDiv);
 
 
 
@@ -304,6 +307,16 @@ function info (marker, i, location) {
       infowindow.open(map, marker);
     }
   })(marker, i));
+
+  google.maps.event.addListener(map, "click", function(event) {
+    infowindow.close();
+  });
+
+  // google.maps.event.addListener(infowindow, 'click', (function(marker, i) {
+  //   return function() {
+  //     infowindow.close(map, marker);
+  //   }
+  // })(marker, i));
 }
 
 // Sets the map on all markers in the array.
@@ -387,7 +400,7 @@ function time_format (time) {
   else if (time[time.length-2] == "A" && num >= 1200) {
     num = num - 1200;
   }
-  console.log(num)
+  // console.log(num)
   return num;
 }
 
@@ -578,6 +591,13 @@ function showStates () {
 
 
 
+// Make a Map Bundle
+function make_map () {
+
+}
+
+
+// https://www.html5rocks.com/en/tutorials/dnd/basics/
 
 
 
@@ -633,3 +653,63 @@ function info2(marker, i, location) {
     }
   })(marker, i));
 }
+
+
+
+
+
+
+
+
+
+
+// Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+var btn = document.getElementById("filter_window");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// console.log(btn)
+
+// // When the user clicks the button, open the modal
+// btn.onclick = function() {
+//     modal.style.display = "block";
+// }
+
+function appear () {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+
+// HODP
+// Modal filter -> multi map -> design -> search by month(Y) day(Y) day of the week (x) between hours (Y)
+
+// Transform real data to workable format (ugh make python script)
+
+// quick stat (Number of crime)
+
+// gradients
+
+
+
+// DP:
+// consider table/fill metadata with prev. data, limit epsilon to residue.(talk from today) (separate js files)
+
+
+
+

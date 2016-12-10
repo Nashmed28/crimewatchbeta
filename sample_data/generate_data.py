@@ -64,6 +64,10 @@ for i in range(500):
 
 
 
+# description -> contains
+# date/time -> based on month, year, day of the week, between time interval, on specific dates and on specific times
+# status, type -> select values
+
 
 
 

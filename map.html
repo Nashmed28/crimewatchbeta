@@ -5,11 +5,11 @@
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        height: 60%;
+        height: 80%;
         width: 100%;
       }
       #map2 {
-        height: 60%;
+        height: 80%;
         width: 49%;
       }  
 
@@ -19,11 +19,143 @@
         margin: 0;
         padding: 0;
       }
+
+
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-footer {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+
+
     </style>
   </head>
 
-  <body onload="initMap(); form()">
+  <body onload="initMap()">
+    
+
+
+
+
+
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="close">x</span>
+      <h2>Filter</h2>
+    </div>
+    <div class="modal-body">
+    
+
     <div id="filter">
+      <div id="filter1">
+        Type: 
+        <select id="filter1_column"></select>
+        Values: <input id="filter1_point" type="text">
+        Ranges: <input id="filter1_range" type="text">
+        Contains: <input id="filter1_contains" type="text"> 
+        <input id="addrow" type="submit" value="Add Row" onclick="addrow()">
+        <br>
+      </div>
+    </div>
+    <div id="filter_submit">     
+      <input type="submit" onclick="search()">
+      <input type="submit" value="Reset" onclick="reset()">
+    </div>
+    
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- Trigger/Open The Modal -->
+<!-- <button id="myBtn">Open Modal</button> -->
+
+
+
+
+
+
+
+
+
+
+    <header><h3>CRIMEWATCHBETA</h3></header>
+
+<!--     <div id="filter">
       Filter: 
       <br>
       <div id="filter1">
@@ -78,18 +210,26 @@
     <div id="storeStateInfo">
       State 1: <br>
       State 2: 
-    </div>
+    </div> -->
 
-
+    <div><h5>Map 1</h5></div>
     <div id="map"></div>
+
+    <div id="storeStateInfo">
+      State 1: <br>
+      State 2: 
+    </div>
+    <input type="submit" value="See State 2 on Separate Map" onclick="newMap()">
+
     <div id="map2"></div>
 
     
     <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEZR5lSww__GQwr3V_Tu0NQKQpzCO5J8k"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="map.js"></script>
-  
+    <script src="mapREAL.js"></script>  
   </body>
 </html>
+
