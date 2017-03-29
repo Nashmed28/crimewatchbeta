@@ -71,8 +71,9 @@ function content (data) {
                     '<div class="iw-title">Crimes at This Location: ' + data.length + '</div>' +
                     '<div class="iw-content">';
     for (i = 0, n = data.length; i < n; i++) {
+    	var comment = data[i][6].replace(/"/g, "").replace(/'/g, "").replace(/\n/g, " ");
     	html += "<p id='crime" + i + "'><b>Crime " + (i+1) + ":</b> " + data[i][3] + " at " + data[i][4] + format_date(data[i][2]) + ". ";
-    	html += "<span id='comment_show" + i + "'style='color:#3366BB;font-style:italic;' onclick='show_officers_comment(" + i + ", \"" + data[i][6] + "\")'>Show Officers' Comments</span>"
+    	html += "<span id='comment_show" + i + "'style='color:#3366BB;font-style:italic;cursor:pointer;' onclick='show_officers_comment(" + i + ", \"" + comment + "\")'>Show Officers' Comments</span>"
     	html += "</p>";
     }
     html += '<div style="font-style: italic; font-size:12px;">* Please note that crimes listed in this location maybe inaccurate. We are trying to resolve this by improving our algorithms</div>'+
@@ -131,12 +132,12 @@ function format_date (date) {
 }
 function show_officers_comment (num, comment) {
 	$("#comment_show" + num).remove();
-	$("#crime"+num).append("<span id='comment" + num + "'><b>Report: </b>" + comment + "</span> <span id='comment_remove" + num + "'style='color:#3366BB;font-style:italic;' onclick='remove_officers_comment(" + num + ", \"" + comment + "\")'>Hide Officers' Comments</span>");
+	$("#crime"+num).append("<span id='comment" + num + "'><b>Report: </b>" + comment + "</span> <span id='comment_remove" + num + "'style='color:#3366BB;font-style:italic;cursor:pointer;' onclick='remove_officers_comment(" + num + ", \"" + comment + "\")'>Hide Officers' Comments</span>");
 }
 function remove_officers_comment (num, comment) {
 	$("#comment"+num).remove();
 	$("#comment_remove"+num).remove();
-	$("#crime"+num).append("<span id='comment_show" + num + "'style='color:#3366BB;font-style:italic;' onclick='show_officers_comment(" + num + ", \"" + comment + "\")'>Show Officers' Comments</span>");
+	$("#crime"+num).append("<span id='comment_show" + num + "'style='color:#3366BB;font-style:italic;cursor:pointer;' onclick='show_officers_comment(" + num + ", \"" + comment + "\")'>Show Officers' Comments</span>");
 }
 
 
@@ -192,44 +193,54 @@ function gather_iframe_info () {
     }
     if (iframe.getElementById("date") != null) {
         var dates_chosen = [];
+        var divs = iframe.getElementById("date_input").getElementsByTagName('div');
+        var num_of_date_input = iframe.getElementById("date_input").childElementCount;
+
         for (j = 0; j < num_of_date_input; j++) {
-            if (iframe.getElementById("date"+j) != null) {
-                if (iframe.getElementById("date"+j).value != "") {
-                    dates_chosen.push(new Date(iframe.getElementById("date"+j).value));
-                }
-            }
+        	var index = divs[j].id.split('date')[0];
+            if (iframe.getElementById("date"+index).value != "") {
+                dates_chosen.push(new Date(iframe.getElementById("date"+index).value));
+            }   
         }
         form_info["date"] = dates_chosen;
     }
     if (iframe.getElementById("drange") != null) {
         var drange_chosen = [];
+        var divs = iframe.getElementById("drange_input").getElementsByTagName('div');
+        var num_of_drange_input = iframe.getElementById("drange_input").childElementCount;
+
         for (j = 0; j < num_of_drange_input; j++) {
-            if (iframe.getElementById("drange"+j) != null) {
-                if (iframe.getElementById("drange"+j+"a").value != "" && iframe.getElementById("drange"+j+"b").value != "") {
-                    drange_chosen.push([new Date(iframe.getElementById("drange"+j+"a").value), new Date(iframe.getElementById("drange"+j+"b").value)]);
-                }
+            var index = divs[j].id.split('drange')[1];
+            if (iframe.getElementById("drange"+index+"a").value != "" && iframe.getElementById("drange"+index+"b").value != "") {
+                drange_chosen.push([new Date(iframe.getElementById("drange"+index+"a").value), new Date(iframe.getElementById("drange"+index+"b").value)]);
             }
+
         }
         form_info["drange"] = drange_chosen;
     }
     if (iframe.getElementById("time") != null) {
         var times_chosen = [];
+        var dates_chosen = [];
+        var divs = iframe.getElementById("time_input").getElementsByTagName('div');
+        var num_of_time_input = iframe.getElementById("time_input").childElementCount;
+
         for (j = 0; j < num_of_time_input; j++) {
-            if (iframe.getElementById("time"+j) != null) {
-                if (iframe.getElementById("time"+j).value != "") {
-                    times_chosen.push(iframe.getElementById("time"+j).value);
-                }
+        	var index = divs[j].id.split('time')[0];
+            if (iframe.getElementById("time"+index).value != "") {
+                times_chosen.push(iframe.getElementById("time"+index).value);
             }
         }
         form_info["time"] = times_chosen;
     }
     if (iframe.getElementById("trange") != null) {
         var trange_chosen = [];
+        var divs = iframe.getElementById("trange_input").getElementsByTagName('div');
+        var num_of_trange_input = iframe.getElementById("trange_input").childElementCount;
+
         for (j = 0; j < num_of_trange_input; j++) {
-            if (iframe.getElementById("trange"+j) != null) {
-                if (iframe.getElementById("trange"+j+"a").value != "" && iframe.getElementById("trange"+j+"b").value != "") {
-                    trange_chosen.push([iframe.getElementById("trange"+j+"a").value, iframe.getElementById("trange"+j+"b").value]);
-                }
+        	var index = divs[j].id.split('trange')[1];
+            if (iframe.getElementById("trange"+index+"a").value != "" && iframe.getElementById("trange"+index+"b").value != "") {
+                trange_chosen.push([iframe.getElementById("trange"+index+"a").value, iframe.getElementById("trange"+index+"b").value]);
             }
         }
         form_info["trange"] = trange_chosen;
@@ -437,14 +448,14 @@ function compare_trange (query_trange, raw_data_date) {
 			var d1_month = raw_data_date[0].getMonth() + 1;
 			var d1_day = raw_data_date[0].getDate();
 			var d1_year = raw_data_date[0].getFullYear();
-			var d1a = new Date(d1_month + "/" + d1_day + "/" + d1_year + " " + query_time[0]);
-			var d1b = new Date(d1_month + "/" + d1_day + "/" + d1_year + " " + query_time[1]);
+			var d1a = new Date(d1_month + "/" + d1_day + "/" + d1_year + " " + query_trange[0]);
+			var d1b = new Date(d1_month + "/" + d1_day + "/" + d1_year + " " + query_trange[1]);
 
 			var d2_month = raw_data_date[1].getMonth() + 1;
 			var d2_day = raw_data_date[1].getDate();
 			var d2_year = raw_data_date[1].getFullYear();
-			var d2a = new Date(d2_month + "/" + d2_day + "/" + d2_year + " " + query_time[0]);
-			var d2b = new Date(d2_month + "/" + d2_day + "/" + d2_year + " " + query_time[1]);
+			var d2a = new Date(d2_month + "/" + d2_day + "/" + d2_year + " " + query_trange[0]);
+			var d2b = new Date(d2_month + "/" + d2_day + "/" + d2_year + " " + query_trange[1]);
 
 			return (!(d2a < raw_data_date[0] && d1b > raw_data_date[1]));
 		}
@@ -452,8 +463,8 @@ function compare_trange (query_trange, raw_data_date) {
 			var d_month = raw_data_date[0].getMonth() + 1;
 			var d_day = raw_data_date[0].getDate();
 			var d_year = raw_data_date[0].getFullYear();
-			var da = new Date(d_month + "/" + d_day + "/" + d_year + " " + query_time[0]);			
-			var db = new Date(d_month + "/" + d_day + "/" + d_year + " " + query_time[1]);
+			var da = new Date(d_month + "/" + d_day + "/" + d_year + " " + query_trange[0]);			
+			var db = new Date(d_month + "/" + d_day + "/" + d_year + " " + query_trange[1]);
 			return (!(db < raw_data_date[0] || da > raw_data_date[1]))
 		}				
 	}
@@ -491,7 +502,8 @@ function containsAll(/* pass all arrays here */) {
 // a. Checking Crimes/Status assumes all UPPERCASE (need to be case-insensitive) [however not really a problem since value on options and values in crime_data are all caps]
 // c. trange requires that time 1 is before time 0
 // d. address matching sucks tbh and needs to be resolved
-// e. Need to have better html for the markers
+// e. Need to have better html for the markers [more or less fixed]
+// f. filters off -> they assume access to js variables
 
 
 
@@ -675,7 +687,7 @@ function info (marker, i, location) {
       infowindow.open(map, marker);
       
       // current_window needed to have one window open at a time
-      if (current_window != false) {
+      if (current_window != false && current_window != infowindow) {
       	current_window.close();	
       }
       current_window = infowindow;
