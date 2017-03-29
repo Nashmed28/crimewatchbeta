@@ -1,0 +1,54 @@
+<!-- https://jsfiddle.net/esedic/Da4m3/ -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>    
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style>
+    body {
+        padding: 10px;
+    }
+    table, th, td {
+        /*border: 1px solid black;*/
+    }
+    td.search_label {
+        width: 150px;
+        vertical-align: middle;
+    }
+    td.search_parameter {
+        width: 500px;
+        vertical-align: middle;
+    }
+    td.search_remove {
+        vertical-align: middle;
+    }
+    tr > td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+</style>
+
+<div><span style="font-weight:bold">Filter on:</span> 
+    <select onchange="search_type_chosen(this)">
+      <option value="default">--Select Option--</option>
+      <option value="type">Type of Crime</option>
+      <option value="status">Status of Crime</option>
+      <option value="date">Certain Date(s)</option>
+      <option value="drange">Date Range</option>
+      <option value="time">Certain Time(s)</option>
+      <option value="trange">Time Range</option>
+      <option value="keywords">Search Officer Remarks</option>
+    </select>
+    <span style="color:white">SPACE</span>
+    <button id="reset_form" onclick="reset();">Reset</button>
+</div>
+
+<br>
+
+<div id="main_form_body">
+    <table id="main_form_table"></table>
+</div> 
+
+<script type="text/javascript" src="Basic_Modal.js"></script>
